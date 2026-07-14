@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Où te situes-tu vraiment ?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --ink:#0f1512;
+    --card:#171f1b;
+    --card-edge:#26332c;
+    --paper:#e9e2d0;
+    --paper-dim:#b9b09a;
+    --mint:#4bdba0;
+    --amber:#e8a33d;
+    --rust:#c1443d;
+    --line: rgba(233,226,208,0.1);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% -10%, rgba(75,219,160,0.08), transparent 45%),
+      radial-gradient(circle at 90% 110%, rgba(193,68,61,0.08), transparent 45%),
+      var(--ink);
+    color:var(--paper);
+    font-family:'Space Grotesk', sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .stage{
+    width:100%;
+    max-width:520px;
+  }
+
+  .masthead{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    display:block;
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(26px, 6vw, 36px);
+    line-height:1.05;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--mint);
+  }
+
+  /* --- Gauge --- */
+  .gauge-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin:18px 0 8px;
+  }
+  .gauge{
+    width:260px;
+    max-width:80vw;
+    height:150px;
+    overflow:visible;
+  }
+  .gauge-labels{
+    display:flex;
+    justify-content:space-between;
+    width:260px;
+    max-width:80vw;
+    margin-top:2px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.04em;
+    color:var(--paper-dim);
+    text-transform:uppercase;
+  }
+  .needle{
+    transform-origin:130px 130px;
+    transition: transform 0.7s cubic-bezier(.34,1.56,.64,1);
+  }
+  .score-readout{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--paper-dim);
+    margin-top:2px;
+    letter-spacing:0.05em;
+  }
+  .score-readout b{ color:var(--paper); font-weight:700;}
+
+  /* --- Card --- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:18px;
+    padding:26px 24px 22px;
+    box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);
+    position:relative;
+    overflow:hidden;
+  }
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .progress-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--mint);
+    white-space:nowrap;
+    letter-spacing:0.05em;
+  }
+  .progress-track{
+    flex:1;
+    height:3px;
+    background:var(--line);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--mint), var(--amber));
+    width:0%;
+    transition:width 0.5s ease;
+  }
+
+  .question{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:19px;
+    line-height:1.35;
+    margin:0 0 18px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    text-align:left;
+    background:rgba(233,226,208,0.03);
+    border:1px solid var(--card-edge);
+    color:var(--paper);
+    border-radius:12px;
+    padding:14px 16px;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14.5px;
+    line-height:1.4;
+    cursor:pointer;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .opt:hover{
+    border-color:var(--mint);
+    background:rgba(75,219,160,0.06);
+    transform:translateY(-1px);
+  }
+  .opt:active{ transform:translateY(0px) scale(0.99); }
+  .opt-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--paper-dim);
+    border:1px solid var(--card-edge);
+    border-radius:6px;
+    padding:2px 6px;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+
+  .opt.chosen{
+    border-color:var(--mint);
+    background:rgba(75,219,160,0.1);
+  }
+
+  /* --- Result --- */
+  .result{
+    display:none;
+  }
+  .result-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+    display:block;
+  }
+  .result-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:28px;
+    margin:0 0 12px;
+    line-height:1.15;
+  }
+  .result-desc{
+    font-size:15px;
+    line-height:1.55;
+    color:var(--paper);
+    opacity:0.9;
+    margin-bottom:20px;
+  }
+  .result-score{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--paper-dim);
+    margin-bottom:20px;
+  }
+  .replay{
+    width:100%;
+    background:transparent;
+    border:1px solid var(--mint);
+    color:var(--mint);
+    border-radius:12px;
+    padding:13px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:background 0.2s, color 0.2s;
+  }
+  .replay:hover{ background:var(--mint); color:var(--ink); }
+
+  footer{
+    text-align:center;
+    margin-top:16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:var(--paper-dim);
+    letter-spacing:0.05em;
+    opacity:0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .needle, .progress-fill, .opt{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="masthead">
+    <span class="eyebrow">Test express · 7 questions</span>
+    <h1>Où te situes-tu <em>vraiment</em> ?</h1>
+  </div>
+
+  <div class="gauge-wrap">
+    <svg class="gauge" viewBox="0 0 260 150">
+      <defs>
+        <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4bdba0"/>
+          <stop offset="50%" stop-color="#e8a33d"/>
+          <stop offset="100%" stop-color="#c1443d"/>
+        </linearGradient>
+      </defs>
+      <path d="M 20 130 A 110 110 0 0 1 240 130" fill="none" stroke="url(#arcGrad)" stroke-width="10" stroke-linecap="round"/>
+      <g id="needleGroup" class="needle" style="transform:rotate(-90deg);">
+        <line x1="130" y1="130" x2="130" y2="34" stroke="#e9e2d0" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="130" cy="130" r="7" fill="#e9e2d0"/>
+      </g>
+    </svg>
+    <div class="gauge-labels">
+      <span>Idéaliste</span>
+      <span>Mixte</span>
+      <span>Résigné</span>
+    </div>
+    <div class="score-readout" id="scoreReadout">Score potentiel : <b>7–14</b></div>
+  </div>
+
+  <div class="card">
+    <div id="quizView">
+      <div class="progress-row">
+        <span class="progress-num" id="progNum">Q1 / 7</span>
+        <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+      </div>
+      <p class="question" id="questionText"></p>
+      <div class="options" id="optionsWrap"></div>
+    </div>
+
+    <div class="result" id="resultView">
+      <span class="result-tag" id="resultTag"></span>
+      <h2 class="result-title" id="resultTitle"></h2>
+      <p class="result-desc" id="resultDesc"></p>
+      <p class="result-score" id="resultScore"></p>
+      <button class="replay" id="replayBtn">Refaire le test</button>
+    </div>
+  </div>
+
+  <footer>1 point par réponse A · 2 points par réponse B</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Quand tu vois un milliardaire français…",
+    a: "Tu penses immédiatement à combien on pourrait financer d'aides sociales avec son patrimoine.",
+    b: "Tu te demandes comment il a fait pour réussir dans ce pays et s'il est encore temps de copier sa stratégie."
+  },
+  {
+    q: "Face à la crise du logement…",
+    a: "La solution passe par plus de régulation et de logements sociaux.",
+    b: "Le marché est bloqué par les normes, les impôts et l'absence de construction, autant investir ailleurs."
+  },
+  {
+    q: "Ton rapport à la voiture et à la clim…",
+    a: "Ce sont des symboles du passé destructeur. Le vélo et l'éventail suffisent.",
+    b: "Tu rêves d'une maison avec garage et clim réversible, même si c'est « pas écolo »."
+  },
+  {
+    q: "Quand tu rates un objectif professionnel…",
+    a: "Tu te dis que la société est injuste et que les structures sont contre toi.",
+    b: "Tu analyses ce qui n'a pas marché dans tes choix et ajustes (ou changes de stratégie)."
+  },
+  {
+    q: "Bitcoin et crypto, pour toi c'est…",
+    a: "Une arnaque écologique et spéculative de plus.",
+    b: "Tu as au moins un petit portefeuille « au cas où »."
+  },
+  {
+    q: "Militantisme et manifestations…",
+    a: "Tu y vas régulièrement, c'est important de faire bouger les lignes.",
+    b: "Tu préfères observer de loin en te disant que ça ne change rien de fondamental."
+  },
+  {
+    q: "Santé mentale, tu expliques tes difficultés…",
+    a: "Principalement par le système oppressif.",
+    b: "Par un mélange de système + tes propres choix, et tu cherches des solutions concrètes."
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const questionText = document.getElementById('questionText');
+const optionsWrap = document.getElementById('optionsWrap');
+const progNum = document.getElementById('progNum');
+const progFill = document.getElementById('progFill');
+const needleGroup = document.getElementById('needleGroup');
+const scoreReadout = document.getElementById('scoreReadout');
+const quizView = document.getElementById('quizView');
+const resultView = document.getElementById('resultView');
+
+function updateNeedle(currentScore, isFinal){
+  // map score range 7-14 to angle -90..90
+  const min = 7, max = 14;
+  const clamped = Math.min(Math.max(currentScore, min), max);
+  const pct = (clamped - min) / (max - min);
+  const angle = -90 + pct * 180;
+  needleGroup.style.transform = `rotate(${angle}deg)`;
+  scoreReadout.innerHTML = isFinal
+    ? `Score final : <b>${currentScore}</b> / 14`
+    : `Score actuel : <b>${currentScore}</b>`;
+}
+
+function renderQuestion(){
+  const item = questions[current];
+  questionText.textContent = item.q;
+  progNum.textContent = `Q${current+1} / ${questions.length}`;
+  progFill.style.width = `${(current/questions.length)*100}%`;
+
+  optionsWrap.innerHTML = '';
+  ['a','b'].forEach(key=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-tag">${key.toUpperCase()}</span><span>${item[key]}</span>`;
+    btn.addEventListener('click', ()=>answer(key));
+    optionsWrap.appendChild(btn);
+  });
+}
+
+function answer(key){
+  score += key === 'a' ? 1 : 2;
+  current++;
+  updateNeedle(score, false);
+
+  if(current >= questions.length){
+    progFill.style.width = '100%';
+    setTimeout(showResult, 350);
+  } else {
+    setTimeout(renderQuestion, 150);
+  }
+}
+
+function showResult(){
+  quizView.style.display = 'none';
+  resultView.style.display = 'block';
+
+  let tag, title, desc;
+  if(score <= 9){
+    tag = 'Profil 7–9';
+    title = 'Idéaliste pur et dur';
+    desc = "Tu veux changer le monde (et les autres). Tes convictions passent avant le confort personnel — et c'est autant une force qu'un angle mort.";
+  } else if(score <= 12){
+    tag = 'Profil 10–12';
+    title = 'Zone mixte';
+    desc = "Le plus sain probablement. Tu gardes un pied dans les principes et un pied dans le réel, sans t'illusionner ni tout lâcher.";
+  } else {
+    tag = 'Profil 13–14';
+    title = 'Résigné assumé';
+    desc = "Tu as décroché, ou tu es en train. Le système ne t'intéresse plus à changer — seulement à naviguer au mieux pour toi.";
+  }
+
+  document.getElementById('resultTag').textContent = tag;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultDesc').textContent = desc;
+  document.getElementById('resultScore').textContent = `Total : ${score} points sur 14`;
+  updateNeedle(score, true);
+}
+
+document.getElementById('replayBtn').addEventListener('click', ()=>{
+  current = 0;
+  score = 0;
+  resultView.style.display = 'none';
+  quizView.style.display = 'block';
+  updateNeedle(7, false);
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+
+</body>
+</html>
