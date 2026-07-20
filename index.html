@@ -3,69 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Où te situes-tu vraiment ?</title>
+<title>Quel archétype de millenial es-tu ?</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
   :root{
-    --ink:#0f1512;
-    --card:#171f1b;
-    --card-edge:#26332c;
-    --paper:#e9e2d0;
-    --paper-dim:#b9b09a;
-    --mint:#4bdba0;
-    --amber:#e8a33d;
-    --rust:#c1443d;
-    --line: rgba(233,226,208,0.1);
+    --ink:#0a0f0c;
+    --card:#1a231e;
+    --card-edge:#334339;
+    --card-hi: rgba(255,255,255,0.05);
+    --paper:#f3eee0;
+    --paper-dim:#c7bfa8;
+    --ideal:#a97bff;
+    --pragma:#f0c33e;
+    --resigne:#f0813f;
+    --line: rgba(243,238,224,0.14);
   }
 
   *{box-sizing:border-box;}
   html,body{height:100%;}
   body{
     margin:0;
-    background:
-      radial-gradient(circle at 15% -10%, rgba(75,219,160,0.08), transparent 45%),
-      radial-gradient(circle at 90% 110%, rgba(193,68,61,0.08), transparent 45%),
-      var(--ink);
+    position:relative;
+    background:var(--ink);
     color:var(--paper);
     font-family:'Space Grotesk', sans-serif;
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:24px;
+    padding:16px;
+  }
+
+  /* --- Fond mosaïque (pellicule de visages floutés) --- */
+  .bg-layer{
+    position:fixed;
+    inset:-60px;
+    z-index:0;
+    background-repeat:repeat;
+    will-change:transform;
+    pointer-events:none;
+  }
+  #bgLayer1{
+    background-size:320px 320px;
+    opacity:0.22;
+    filter:saturate(0.85);
+  }
+  #bgLayer2{
+    background-size:400px 400px;
+    background-position:120px 60px;
+    opacity:0.18;
+    filter:saturate(0.85);
+  }
+  .bg-scrim{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    background:
+      radial-gradient(circle at 50% 40%, rgba(10,15,12,0.22), rgba(10,15,12,0.74) 72%),
+      radial-gradient(circle at 15% -10%, rgba(169,123,255,0.10), transparent 45%),
+      radial-gradient(circle at 90% 110%, rgba(240,129,63,0.10), transparent 45%);
+    pointer-events:none;
   }
 
   .stage{
+    position:relative;
+    z-index:2;
     width:100%;
-    max-width:520px;
+    max-width:460px;
   }
 
-  .masthead{
+  /* --- Hero (image + titre superposé) --- */
+  .hero{
+    position:relative;
+    height:200px;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid var(--card-edge);
+    box-shadow:0 24px 60px -18px rgba(0,0,0,0.75);
+    margin-bottom:14px;
+  }
+  .hero img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center 40%;
+  }
+  .hero-scrim{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(to top, rgba(10,15,12,0.97) 0%, rgba(10,15,12,0.8) 40%, rgba(10,15,12,0.08) 78%);
+  }
+  .hero-text{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding:10px 16px 12px;
+    z-index:2;
     text-align:center;
-    margin-bottom:22px;
+    text-shadow:0 2px 12px rgba(0,0,0,0.5);
   }
   .eyebrow{
     font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.18em;
+    font-size:10px;
+    letter-spacing:0.16em;
     text-transform:uppercase;
     color:var(--paper-dim);
     display:block;
-    margin-bottom:8px;
+    margin-bottom:4px;
   }
   h1{
     font-family:'Fraunces', serif;
     font-weight:600;
-    font-size:clamp(26px, 6vw, 36px);
-    line-height:1.05;
-    margin:0;
+    font-size:clamp(19px, 5.2vw, 24px);
+    line-height:1.1;
+    margin:0 0 4px;
     letter-spacing:-0.01em;
   }
   h1 em{
     font-style:italic;
     font-weight:300;
-    color:var(--mint);
+    color:var(--ideal);
+  }
+  .subtitle{
+    font-size:10.5px;
+    color:var(--paper-dim);
+    font-style:italic;
+    margin:0;
   }
 
   /* --- Gauge --- */
@@ -73,33 +138,34 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    margin:18px 0 8px;
+    margin:8px 0 6px;
   }
   .gauge{
-    width:260px;
-    max-width:80vw;
-    height:150px;
+    width:210px;
+    max-width:70vw;
+    height:118px;
     overflow:visible;
   }
   .gauge-labels{
     display:flex;
     justify-content:space-between;
-    width:260px;
-    max-width:80vw;
-    margin-top:2px;
+    width:210px;
+    max-width:70vw;
+    margin-top:1px;
     font-family:'JetBrains Mono', monospace;
-    font-size:9.5px;
+    font-size:9px;
     letter-spacing:0.04em;
     color:var(--paper-dim);
     text-transform:uppercase;
   }
+  .gauge-labels span{ transition: color 0.3s; }
   .needle{
-    transform-origin:130px 130px;
+    transform-origin:105px 105px;
     transition: transform 0.7s cubic-bezier(.34,1.56,.64,1);
   }
   .score-readout{
     font-family:'JetBrains Mono', monospace;
-    font-size:12px;
+    font-size:11px;
     color:var(--paper-dim);
     margin-top:2px;
     letter-spacing:0.05em;
@@ -110,22 +176,25 @@
   .card{
     background:var(--card);
     border:1px solid var(--card-edge);
-    border-radius:18px;
-    padding:26px 24px 22px;
-    box-shadow:0 20px 50px -20px rgba(0,0,0,0.6);
+    border-radius:16px;
+    padding:18px 18px 16px;
+    box-shadow:
+      0 24px 60px -18px rgba(0,0,0,0.75),
+      inset 0 1px 0 var(--card-hi);
     position:relative;
     overflow:hidden;
+    backdrop-filter:blur(2px);
   }
   .progress-row{
     display:flex;
     align-items:center;
     gap:10px;
-    margin-bottom:16px;
+    margin-bottom:12px;
   }
   .progress-num{
     font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    color:var(--mint);
+    font-size:10.5px;
+    color:var(--ideal);
     white-space:nowrap;
     letter-spacing:0.05em;
   }
@@ -138,7 +207,7 @@
   }
   .progress-fill{
     height:100%;
-    background:linear-gradient(90deg, var(--mint), var(--amber));
+    background:linear-gradient(90deg, var(--ideal), var(--pragma));
     width:0%;
     transition:width 0.5s ease;
   }
@@ -146,41 +215,42 @@
   .question{
     font-family:'Fraunces', serif;
     font-weight:500;
-    font-size:19px;
-    line-height:1.35;
-    margin:0 0 18px;
+    font-size:16.5px;
+    line-height:1.32;
+    margin:0 0 12px;
   }
 
   .options{
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:8px;
   }
   .opt{
     text-align:left;
-    background:rgba(233,226,208,0.03);
+    background:rgba(243,238,224,0.045);
     border:1px solid var(--card-edge);
     color:var(--paper);
-    border-radius:12px;
-    padding:14px 16px;
+    border-radius:11px;
+    padding:10px 13px;
     font-family:'Space Grotesk', sans-serif;
-    font-size:14.5px;
-    line-height:1.4;
+    font-size:12.8px;
+    line-height:1.38;
     cursor:pointer;
     display:flex;
-    gap:12px;
+    gap:10px;
     align-items:flex-start;
-    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
   }
   .opt:hover{
-    border-color:var(--mint);
-    background:rgba(75,219,160,0.06);
+    border-color:var(--ideal);
+    background:rgba(169,123,255,0.1);
     transform:translateY(-1px);
+    box-shadow:0 6px 16px -8px rgba(169,123,255,0.35);
   }
   .opt:active{ transform:translateY(0px) scale(0.99); }
   .opt-tag{
     font-family:'JetBrains Mono', monospace;
-    font-size:11px;
+    font-size:10px;
     font-weight:700;
     color:var(--paper-dim);
     border:1px solid var(--card-edge);
@@ -190,65 +260,108 @@
     margin-top:1px;
   }
 
-  .opt.chosen{
-    border-color:var(--mint);
-    background:rgba(75,219,160,0.1);
-  }
-
   /* --- Result --- */
-  .result{
-    display:none;
-  }
+  .result{ display:none; }
   .result-tag{
     font-family:'JetBrains Mono', monospace;
-    font-size:11px;
+    font-size:10.5px;
     letter-spacing:0.14em;
     text-transform:uppercase;
     color:var(--paper-dim);
-    margin-bottom:6px;
+    margin-bottom:5px;
     display:block;
   }
   .result-title{
     font-family:'Fraunces', serif;
     font-weight:700;
-    font-size:28px;
-    margin:0 0 12px;
+    font-size:22px;
+    margin:0 0 10px;
     line-height:1.15;
   }
   .result-desc{
-    font-size:15px;
-    line-height:1.55;
+    font-size:13px;
+    line-height:1.5;
     color:var(--paper);
     opacity:0.9;
-    margin-bottom:20px;
+    margin-bottom:14px;
   }
-  .result-score{
+  .result-breakdown{
+    display:flex;
+    gap:7px;
+    margin-bottom:14px;
+  }
+  .bd-chip{
+    flex:1;
+    text-align:center;
+    border:1px solid var(--card-edge);
+    border-radius:9px;
+    padding:7px 3px;
     font-family:'JetBrains Mono', monospace;
-    font-size:13px;
-    color:var(--paper-dim);
-    margin-bottom:20px;
   }
+  .bd-chip .n{ display:block; font-size:15px; font-weight:700; }
+  .bd-chip .l{ display:block; font-size:8px; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.05em; margin-top:2px;}
+
+  .persona-preview{
+    width:100%;
+    border-radius:12px;
+    margin-bottom:10px;
+    display:none;
+    border:1px solid var(--card-edge);
+  }
+
+  .share-btn{
+    width:100%;
+    background:var(--ideal);
+    border:1px solid var(--ideal);
+    color:var(--ink);
+    border-radius:11px;
+    padding:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.07em;
+    text-transform:uppercase;
+    cursor:pointer;
+    margin-bottom:8px;
+    transition:opacity 0.2s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .share-btn:hover{ opacity:0.88; }
+  .share-note{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:var(--ideal);
+    height:13px;
+    margin-bottom:6px;
+    opacity:0;
+    transition:opacity 0.2s;
+  }
+  .share-note.visible{ opacity:1; }
+
   .replay{
     width:100%;
     background:transparent;
-    border:1px solid var(--mint);
-    color:var(--mint);
-    border-radius:12px;
-    padding:13px;
+    border:1px solid var(--card-edge);
+    color:var(--paper-dim);
+    border-radius:11px;
+    padding:12px;
     font-family:'JetBrains Mono', monospace;
-    font-size:12.5px;
-    letter-spacing:0.08em;
+    font-size:11.5px;
+    letter-spacing:0.07em;
     text-transform:uppercase;
     cursor:pointer;
-    transition:background 0.2s, color 0.2s;
+    transition:background 0.2s, color 0.2s, border-color 0.2s;
   }
-  .replay:hover{ background:var(--mint); color:var(--ink); }
+  .replay:hover{ border-color:var(--paper-dim); color:var(--paper); }
 
   footer{
     text-align:center;
-    margin-top:16px;
+    margin-top:10px;
     font-family:'JetBrains Mono', monospace;
-    font-size:10px;
+    font-size:9.5px;
     color:var(--paper-dim);
     letter-spacing:0.05em;
     opacity:0.6;
@@ -261,39 +374,48 @@
 </head>
 <body>
 
+<div class="bg-layer" id="bgLayer1" style="background-image:url(images/bg-layer-1.png);"></div>
+<div class="bg-layer" id="bgLayer2" style="background-image:url(images/bg-layer-2.png);"></div>
+<div class="bg-scrim"></div>
+
 <div class="stage">
-  <div class="masthead">
-    <span class="eyebrow">Test express · 7 questions</span>
-    <h1>Où te situes-tu <em>vraiment</em> ?</h1>
+  <div class="hero">
+    <img id="headerImg" src="images/header.jpg" alt="D'un côté la fierté militante, de l'autre la lassitude en sweat gris.">
+    <div class="hero-scrim"></div>
+    <div class="hero-text">
+      <span class="eyebrow">Quiz · 11 questions</span>
+      <h1>Quel archétype de <em>millenial</em> es-tu ?</h1>
+      <p class="subtitle">Propositions volontairement caricaturales</p>
+    </div>
   </div>
 
   <div class="gauge-wrap">
-    <svg class="gauge" viewBox="0 0 260 150">
+    <svg class="gauge" viewBox="0 0 210 118">
       <defs>
         <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#4bdba0"/>
-          <stop offset="50%" stop-color="#e8a33d"/>
-          <stop offset="100%" stop-color="#c1443d"/>
+          <stop offset="0%" stop-color="#9B6BEF"/>
+          <stop offset="50%" stop-color="#E8C23D"/>
+          <stop offset="100%" stop-color="#E8763D"/>
         </linearGradient>
       </defs>
-      <path d="M 20 130 A 110 110 0 0 1 240 130" fill="none" stroke="url(#arcGrad)" stroke-width="10" stroke-linecap="round"/>
-      <g id="needleGroup" class="needle" style="transform:rotate(-90deg);">
-        <line x1="130" y1="130" x2="130" y2="34" stroke="#e9e2d0" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="130" cy="130" r="7" fill="#e9e2d0"/>
+      <path d="M 16 105 A 89 89 0 0 1 194 105" fill="none" stroke="url(#arcGrad)" stroke-width="9" stroke-linecap="round"/>
+      <g id="needleGroup" class="needle" style="transform:rotate(0deg);">
+        <line x1="105" y1="105" x2="105" y2="27" stroke="#e9e2d0" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="105" cy="105" r="6" fill="#e9e2d0"/>
       </g>
     </svg>
     <div class="gauge-labels">
-      <span>Idéaliste</span>
-      <span>Mixte</span>
-      <span>Résigné</span>
+      <span id="lbl-ideal">?</span>
+      <span id="lbl-pragma">?</span>
+      <span id="lbl-resigne">?</span>
     </div>
-    <div class="score-readout" id="scoreReadout">Score potentiel : <b>7–14</b></div>
+    <div class="score-readout" id="scoreReadout">Réponds honnêtement (ou pas)</div>
   </div>
 
   <div class="card">
     <div id="quizView">
       <div class="progress-row">
-        <span class="progress-num" id="progNum">Q1 / 7</span>
+        <span class="progress-num" id="progNum">Q1 / 11</span>
         <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
       </div>
       <p class="question" id="questionText"></p>
@@ -304,55 +426,100 @@
       <span class="result-tag" id="resultTag"></span>
       <h2 class="result-title" id="resultTitle"></h2>
       <p class="result-desc" id="resultDesc"></p>
-      <p class="result-score" id="resultScore"></p>
+      <div class="result-breakdown" id="resultBreakdown"></div>
+      <img class="persona-preview" id="personaPreview" alt="Ta persona card">
+      <button class="share-btn" id="shareBtn">📤 Partager ma persona card</button>
+      <div class="share-note" id="shareNote"></div>
       <button class="replay" id="replayBtn">Refaire le test</button>
     </div>
   </div>
 
-  <footer>1 point par réponse A · 2 points par réponse B</footer>
+  <footer>Ta majorité de réponses détermine ton archétype</footer>
 </div>
 
 <script>
 const questions = [
   {
-    q: "Quand tu vois un milliardaire français…",
-    a: "Tu penses immédiatement à combien on pourrait financer d'aides sociales avec son patrimoine.",
-    b: "Tu te demandes comment il a fait pour réussir dans ce pays et s'il est encore temps de copier sa stratégie."
+    q: "Tu vois un grand patron ou un millionnaire français…",
+    ideal: "Tu penses immédiatement à combien on pourrait financer d'aides sociales avec son patrimoine.",
+    resigne: "Tu te demandes comment il a fait pour réussir dans ce pays et s'il est encore temps de copier sa stratégie.",
+    pragma: "Tu te demandes quelle est sa contribution au budget du pays."
   },
   {
-    q: "Face à la crise du logement…",
-    a: "La solution passe par plus de régulation et de logements sociaux.",
-    b: "Le marché est bloqué par les normes, les impôts et l'absence de construction, autant investir ailleurs."
+    q: "Face à la difficulté à se loger, tu te dis…",
+    ideal: "Vite, plus de régulation et de logements sociaux. Perso tu adores le « co-living » et les « souplex ».",
+    resigne: "Les boomers possèdent 40% de l'immo et 1/4 du budget du pays part en retraites. T'aimes pas la pierre anyway.",
+    pragma: "Quel est l'effet des mesures de plafonnement des loyers ou rénovation énergétique sur la disponibilité des biens ?"
   },
   {
-    q: "Ton rapport à la voiture et à la clim…",
-    a: "Ce sont des symboles du passé destructeur. Le vélo et l'éventail suffisent.",
-    b: "Tu rêves d'une maison avec garage et clim réversible, même si c'est « pas écolo »."
+    q: "Pour toi, le réchauffement climatique…",
+    ideal: "C'est à cause des français qui ne trient pas leurs déchets, qui prennent encore l'avion et qui ont la clim.",
+    resigne: "Peu importe, tu n'as pas les moyens d'avoir des mômes et tu ne vivras pas vieux vu l'état du système de santé.",
+    pragma: "C'est sérieux et il faut s'adapter. D'ailleurs la France est leader mondial sur le nucléaire et la décarbonation."
   },
   {
-    q: "Quand tu rates un objectif professionnel…",
-    a: "Tu te dis que la société est injuste et que les structures sont contre toi.",
-    b: "Tu analyses ce qui n'a pas marché dans tes choix et ajustes (ou changes de stratégie)."
+    q: "On te parle de l'écart des salaires hommes/femmes…",
+    ideal: "Les hommes sont payés 30% de plus, le patriarcat est partout. Il faut des quotas et plus de sanctions.",
+    resigne: "Ouais, elles ont qu'à plonger souder des cables. De toute façon personne n'arrive plus à vivre décemment.",
+    pragma: "C'est un vrai sujet, à étudier en termes de temps de travail, de secteurs choisis et d'interruptions de carrière."
   },
   {
-    q: "Bitcoin et crypto, pour toi c'est…",
-    a: "Une arnaque écologique et spéculative de plus.",
-    b: "Tu as au moins un petit portefeuille « au cas où »."
+    q: "Tu considères la retraite comme…",
+    ideal: "Une question de justice sociale. On doit pouvoir partir à 60 ans comme nos parents en taxant les riches.",
+    resigne: "La quoi ? De toute façon tu seras mort avant, ou tu vivras du RSA, de Bitcoin et de paris sportifs.",
+    pragma: "N'étant plus adaptée à la démographie. Continuer à payer les pensions par la dette n'est ni viable ni juste."
   },
   {
-    q: "Militantisme et manifestations…",
-    a: "Tu y vas régulièrement, c'est important de faire bouger les lignes.",
-    b: "Tu préfères observer de loin en te disant que ça ne change rien de fondamental."
+    q: "Quand on te parle d'études, tu réponds…",
+    ideal: "Une laisse néolibérale. Il faut plus de sociologues pour étudier les inégalités et moins d'ingénieurs en nucléaire.",
+    resigne: "Pire arnaque les études : loyers exorbitants et crédits étudiants... tout ça pour galérer à trouver un CDI à la fin !",
+    pragma: "Le niveau a dévissé alors qu'on était pionniers. Il faut remettres du mérite et faire briller les filières pro."
   },
   {
-    q: "Santé mentale, tu expliques tes difficultés…",
-    a: "Principalement par le système oppressif.",
-    b: "Par un mélange de système + tes propres choix, et tu cherches des solutions concrètes."
+    q: "La vie d'adulte n'est pas celle qu'on t'avait vendue...",
+    ideal: "C'est en grande partie lié à ton fonctionnement cognitif particulier.",
+    resigne: "La société est injuste et le système est contre toi. C'est la faute [au choix] des étrangers|patrons|femmes.",
+    pragma: "Tu essaies de comprendre d'où vient le décalage, tu te formes à l'économie et à l'histoire. Insee.fr est en favori."
+  },
+  {
+    q: "L'État et les prélèvements obligatoires t'inspirent…",
+    ideal: "Le meilleur modèle du monde, vive la carte Vitale et l'éducation gratuite ! Les américains en PLS...",
+    resigne: "Champion du monde de la pression fiscale avec 47% de prélèvements. Ça fait cher pour mourir aux urgences…",
+    pragma: "Un modèle social précieux mais qui fonctionne à crédit. 50 ans que le pays dépense de l’argent qu’il n’a pas."
+  },
+  {
+    q: "Ta vision de la santé et de l'hygiène de vie…",
+    ideal: "Tes artères, ton choix. Mais tout le monde devrait être vegan pour sauver la planète.",
+    resigne: "Salle de sport 5 fois par semaine, régime multi-protéiné et ribambelle de compléments pour les perfs.",
+    pragma: "Un équilibre avant tout : bouger, bien manger, mais sans devenir fanatique ni culpabiliser tout le monde."
+  },
+  {
+    q: "Ton point de vue sur les relations humaines…",
+    ideal: "Les pervers narcissiques sont partout. Surtout ton ex et ta famille.",
+    resigne: "Tu n'as quasiment plus de relations IRL. C'est plus simple comme ça.",
+    pragma: "C'est parfois compliqué, mais l'empathie et l'échange permettent de comprendre tous les points de vue."
+  },
+  {
+    q: "Tu vois les entreprises comme…",
+    ideal: "LE symbole du capitalisme, des profits et du patriarcat. L'avenir : des collectifs sans chef et zéro pression.",
+    resigne: "Un cauchemar. Le souvenir de ton dernier team building te donne encore envie de sauter du 11e étage.",
+    pragma: "Des organisations dont le but est de produire des biens ou des services pour un ensemble de clients ou usagers."
   }
 ];
 
+const orderPatterns = [
+  ['ideal','resigne','pragma'],
+  ['ideal','pragma','resigne'],
+  ['resigne','ideal','pragma'],
+  ['resigne','pragma','ideal'],
+  ['pragma','ideal','resigne'],
+  ['pragma','resigne','ideal'],
+];
+
 let current = 0;
-let score = 0;
+const counts = { ideal:0, resigne:0, pragma:0 };
+const values = { ideal:-1, pragma:0, resigne:1 };
+const answeredValues = [];
 
 const questionText = document.getElementById('questionText');
 const optionsWrap = document.getElementById('optionsWrap');
@@ -362,39 +529,53 @@ const needleGroup = document.getElementById('needleGroup');
 const scoreReadout = document.getElementById('scoreReadout');
 const quizView = document.getElementById('quizView');
 const resultView = document.getElementById('resultView');
+const lblIdeal = document.getElementById('lbl-ideal');
+const lblPragma = document.getElementById('lbl-pragma');
+const lblResigne = document.getElementById('lbl-resigne');
+const personaPreview = document.getElementById('personaPreview');
 
-function updateNeedle(currentScore, isFinal){
-  // map score range 7-14 to angle -90..90
-  const min = 7, max = 14;
-  const clamped = Math.min(Math.max(currentScore, min), max);
-  const pct = (clamped - min) / (max - min);
-  const angle = -90 + pct * 180;
+function updateNeedle(isFinal){
+  const avg = answeredValues.length
+    ? answeredValues.reduce((a,b)=>a+b,0) / answeredValues.length
+    : 0;
+  const angle = avg * 90;
   needleGroup.style.transform = `rotate(${angle}deg)`;
-  scoreReadout.innerHTML = isFinal
-    ? `Score final : <b>${currentScore}</b> / 14`
-    : `Score actuel : <b>${currentScore}</b>`;
+
+  if(!isFinal){
+    scoreReadout.innerHTML = `Tendance : <b>???</b>`;
+    return;
+  }
+  let label;
+  if(avg < -0.2) label = 'tranchée';
+  else if(avg > 0.2) label = 'tranchée';
+  else label = 'équilibrée';
+  scoreReadout.innerHTML = `Tendance finale : <b>${label}</b>`;
 }
 
 function renderQuestion(){
   const item = questions[current];
+  const order = orderPatterns[current % orderPatterns.length];
+
   questionText.textContent = item.q;
   progNum.textContent = `Q${current+1} / ${questions.length}`;
   progFill.style.width = `${(current/questions.length)*100}%`;
 
   optionsWrap.innerHTML = '';
-  ['a','b'].forEach(key=>{
+  const letters = ['A','B','C'];
+  order.forEach((type, i)=>{
     const btn = document.createElement('button');
     btn.className = 'opt';
-    btn.innerHTML = `<span class="opt-tag">${key.toUpperCase()}</span><span>${item[key]}</span>`;
-    btn.addEventListener('click', ()=>answer(key));
+    btn.innerHTML = `<span class="opt-tag">${letters[i]}</span><span>${item[type]}</span>`;
+    btn.addEventListener('click', ()=>answer(type));
     optionsWrap.appendChild(btn);
   });
 }
 
-function answer(key){
-  score += key === 'a' ? 1 : 2;
+function answer(type){
+  counts[type]++;
+  answeredValues.push(values[type]);
   current++;
-  updateNeedle(score, false);
+  updateNeedle(false);
 
   if(current >= questions.length){
     progFill.style.width = '100%';
@@ -404,40 +585,404 @@ function answer(key){
   }
 }
 
-function showResult(){
+const PROFILES = {
+  ideal: {
+    tag: 'Majorité idéaliste',
+    title: "L'Idéaliste Militant",
+    short: "milite sans relâche pour plus de redistribution et de justice sociale",
+    desc: "Il croit encore qu'on peut tout changer. Il milite, poste, manifeste. Pour lui, les coupables sont clairs : le système, les riches, les boomers. Sa solution : plus d'impôts, plus de régulations, plus de justice sociale. Le piège : la colère permanente et le burn-out militant.",
+    bullets: [
+      "Il croit encore qu'on peut tout changer : il milite, poste, manifeste.",
+      "Les coupables sont clairs — le système, les riches, les boomers. Sa solution : plus d'impôts, plus de régulations, plus de justice sociale.",
+      "Le piège : la colère permanente et le burn-out militant."
+    ],
+    stats: { vocal: 88, cynique: 30, collectif: 80, survie: 20 }
+  },
+  resigne: {
+    tag: 'Majorité résignée',
+    title: "Le Résigné Cramé",
+    short: "a compris que les règles ont changé et ne veut plus jouer",
+    desc: "Il a compris que les règles ont changé et qu'il ne veut plus jouer. Il décroche, réduit ses besoins, parie sur le Bitcoin ou vit en mode survie. Le piège : le cynisme, l'isolement et le renoncement progressif.",
+    bullets: [
+      "Il a compris que les règles ont changé — et qu'il ne veut plus jouer.",
+      "Il décroche, réduit ses besoins, parie sur le Bitcoin ou vit en mode survie.",
+      "Le piège : le cynisme, l'isolement et le renoncement progressif."
+    ],
+    stats: { vocal: 15, cynique: 82, collectif: 22, survie: 78 }
+  },
+  pragma: {
+    tag: 'Majorité pragmatique',
+    title: "Le Pragmatique Curieux",
+    short: "ni militant ni fataliste, il regarde les chiffres avant de s'exprimer",
+    desc: "Il regarde les chiffres avant de crier au scandale. Ni militant ni fataliste — juste lucide, et un peu geek des données.",
+    bullets: [
+      "Il regarde les chiffres avant de crier au scandale.",
+      "Ni militant ni fataliste, il ajuste sa position sujet par sujet.",
+      "Le piège : l'indécision permanente et la peur de trancher."
+    ],
+    stats: { vocal: 55, cynique: 22, collectif: 62, survie: 55 }
+  }
+};
+
+let lastResult = null;
+
+async function showResult(){
   quizView.style.display = 'none';
   resultView.style.display = 'block';
 
-  let tag, title, desc;
-  if(score <= 9){
-    tag = 'Profil 7–9';
-    title = 'Idéaliste pur et dur';
-    desc = "Tu veux changer le monde (et les autres). Tes convictions passent avant le confort personnel — et c'est autant une force qu'un angle mort.";
-  } else if(score <= 12){
-    tag = 'Profil 10–12';
-    title = 'Zone mixte';
-    desc = "Le plus sain probablement. Tu gardes un pied dans les principes et un pied dans le réel, sans t'illusionner ni tout lâcher.";
+  lblIdeal.textContent = 'Idéaliste';
+  lblPragma.textContent = 'Pragmatique';
+  lblResigne.textContent = 'Résigné';
+  lblIdeal.style.color = 'var(--ideal)';
+  lblPragma.style.color = 'var(--pragma)';
+  lblResigne.style.color = 'var(--resigne)';
+
+  const max = Math.max(counts.ideal, counts.resigne, counts.pragma);
+  const winners = Object.keys(counts).filter(k => counts[k] === max);
+
+  let tag, title, desc, key;
+  if(winners.length === 1){
+    key = winners[0];
+    const p = PROFILES[key];
+    tag = p.tag; title = p.title; desc = p.desc;
   } else {
-    tag = 'Profil 13–14';
-    title = 'Résigné assumé';
-    desc = "Tu as décroché, ou tu es en train. Le système ne t'intéresse plus à changer — seulement à naviguer au mieux pour toi.";
+    key = 'double';
+    tag = 'Profil double';
+    title = winners.map(w => PROFILES[w].title).join(' & ');
+    desc = "Tu navigues entre deux postures sans t'installer durablement dans aucune — ça dépend clairement du sujet.";
   }
 
   document.getElementById('resultTag').textContent = tag;
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('resultDesc').textContent = desc;
-  document.getElementById('resultScore').textContent = `Total : ${score} points sur 14`;
-  updateNeedle(score, true);
+
+  const bd = document.getElementById('resultBreakdown');
+  bd.innerHTML = '';
+  [['ideal','Idéaliste','--ideal'],['pragma','Pragmatique','--pragma'],['resigne','Résigné','--resigne']].forEach(([k,label,color])=>{
+    const chip = document.createElement('div');
+    chip.className = 'bd-chip';
+    chip.style.borderColor = `var(${color})`;
+    chip.innerHTML = `<span class="n" style="color:var(${color})">${counts[k]}</span><span class="l">${label}</span>`;
+    bd.appendChild(chip);
+  });
+
+  updateNeedle(true);
+
+  lastResult = { key, title, winners, counts: { ...counts } };
+
+  // Génère et affiche la persona card immédiatement, sans attendre un clic
+  personaPreview.style.display = 'none';
+  personaPreview.src = '';
+  currentCardDataUrl = null;
+  try{
+    const shareData = buildShareResult();
+    const canvas = await buildPersonaCard(shareData);
+    currentCardDataUrl = canvas.toDataURL('image/png');
+    personaPreview.src = currentCardDataUrl;
+    personaPreview.style.display = 'block';
+  }catch(e){
+    // si la génération échoue, on garde juste le texte + les chips, pas bloquant
+  }
 }
 
 document.getElementById('replayBtn').addEventListener('click', ()=>{
   current = 0;
-  score = 0;
+  counts.ideal = 0; counts.resigne = 0; counts.pragma = 0;
+  answeredValues.length = 0;
   resultView.style.display = 'none';
   quizView.style.display = 'block';
-  updateNeedle(7, false);
+  lblIdeal.textContent = '?'; lblPragma.textContent = '?'; lblResigne.textContent = '?';
+  lblIdeal.style.color = ''; lblPragma.style.color = ''; lblResigne.style.color = '';
+  updateNeedle(false);
   renderQuestion();
 });
+
+/* ---------------- Persona card (canvas) ---------------- */
+
+const STAT_META = [
+  { key: 'vocal',     label: 'vocal',     icon: '📢', color: '#E2356E' },
+  { key: 'cynique',   label: 'cynique',   icon: '😒', color: '#F0A630' },
+  { key: 'collectif', label: 'collectif', icon: '👥', color: '#3FAE58' },
+  { key: 'survie',    label: 'survie',    icon: '🏠', color: '#2F80C8' },
+];
+
+function personaColor(key){
+  return key === 'ideal' ? '#8B5CF6' : key === 'resigne' ? '#F0813F' : key === 'pragma' ? '#E8B93E' : '#8b8478';
+}
+
+function roundRectPath(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawCover(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh){
+  const scale = Math.max(dw / sw, dh / sh);
+  const drawW = sw * scale, drawH = sh * scale;
+  const offsetX = dx - (drawW - dw) / 2;
+  const offsetY = dy - (drawH - dh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh, offsetX, offsetY, drawW, drawH);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines){
+  const words = text.split(' ');
+  let line = '';
+  let lines = 0;
+  for(let n = 0; n < words.length; n++){
+    const testLine = line + words[n] + ' ';
+    if(ctx.measureText(testLine).width > maxWidth && n > 0){
+      ctx.fillText(line.trim(), x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+      lines++;
+      if(maxLines && lines >= maxLines - 1){
+        // dernière ligne autorisée : on tronque proprement le reste
+        const rest = words.slice(n + 1).join(' ');
+        line = (line.trim() + (rest ? ' ' + rest : '')).trim();
+        ctx.fillText(line.length > 60 ? line.slice(0, 58) + '…' : line, x, y);
+        return y + lineHeight;
+      }
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line.trim(), x, y);
+  return y + lineHeight;
+}
+
+// Images de résultat par persona, servies depuis le dossier images/personas/ du repo
+const PERSONA_IMAGES = {
+  ideal:   'images/personas/ideal.jpg',
+  resigne: 'images/personas/resigne.jpg',
+  pragma:  'images/personas/pragma.jpg',
+  double:  'images/personas/pragma.jpg' // profil double : image de secours
+};
+
+const personaImageCache = {};
+
+function loadPersonaResultImage(key){
+  const src = PERSONA_IMAGES[key] || PERSONA_IMAGES.pragma;
+  if(personaImageCache[src]) return personaImageCache[src];
+
+  personaImageCache[src] = new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Impossible de charger l'image de persona : ${src}`));
+    img.src = src;
+  });
+
+  return personaImageCache[src];
+}
+
+async function buildPersonaCard(result){
+  if(document.fonts && document.fonts.ready){ await document.fonts.ready; }
+
+  const W = 1080, H = 1350;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const PAGE_BG = '#EDEAE0';
+  const CARD_BG = '#FBF9F3';
+  const INK = '#1A1A18';
+  const GREY = '#6B6459';
+
+  // Fond de page
+  ctx.fillStyle = PAGE_BG;
+  ctx.fillRect(0, 0, W, H);
+
+  const cardX = 40, cardY = 40, cardW = W - 80, cardH = H - 80, radius = 36;
+
+  // Ombre douce sous la carte
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.18)';
+  ctx.shadowBlur = 50;
+  ctx.shadowOffsetY = 18;
+  ctx.fillStyle = CARD_BG;
+  roundRectPath(ctx, cardX, cardY, cardW, cardH, radius);
+  ctx.fill();
+  ctx.restore();
+
+  // Photo (clip = forme de la carte pour arrondir les coins hauts)
+  const key = result.key;
+  const img = await loadPersonaResultImage(key);
+  const iw = img.naturalWidth, ih = img.naturalHeight;
+  const photoH = 620;
+
+  ctx.save();
+  roundRectPath(ctx, cardX, cardY, cardW, cardH, radius);
+  ctx.clip();
+  drawCover(ctx, img, 0, 0, iw, ih, cardX, cardY, cardW, photoH);
+  ctx.restore();
+
+  // Badge coloré en haut à gauche de la photo
+  const badgeLabel = key === 'double' ? 'PROFIL DOUBLE' : `MAJORITÉ ${key === 'ideal' ? 'IDÉALISTE' : key === 'resigne' ? 'RÉSIGNÉE' : 'PRAGMATIQUE'}`;
+  ctx.font = '700 22px "JetBrains Mono", monospace';
+  const badgePadX = 20;
+  const badgeW = ctx.measureText(badgeLabel).width + badgePadX * 2;
+  roundRectPath(ctx, cardX + 32, cardY + 32, badgeW, 48, 24);
+  ctx.fillStyle = personaColor(key);
+  ctx.fill();
+  ctx.fillStyle = '#141414';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(badgeLabel, cardX + 32 + badgePadX, cardY + 32 + 25);
+  ctx.textBaseline = 'alphabetic';
+
+  // Zone texte sous la photo
+  const padX = cardX + 56;
+  const textW = cardW - 112;
+  let y = cardY + photoH + 80;
+
+  ctx.fillStyle = INK;
+  ctx.font = '700 54px "Fraunces", serif';
+  y = wrapText(ctx, result.title, padX, y, textW, 58, 2);
+  y += 6;
+
+  ctx.fillStyle = GREY;
+  ctx.font = '400 27px "Space Grotesk", sans-serif';
+  y = wrapText(ctx, result.short, padX, y, textW, 36, 2);
+  y += 26;
+
+  // Ligne de séparation
+  ctx.strokeStyle = 'rgba(26,26,24,0.12)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padX, y);
+  ctx.lineTo(cardX + cardW - 56, y);
+  ctx.stroke();
+  y += 46;
+
+  // Barres de stats
+  const barTrackW = textW - 190;
+  const barX = padX + 190;
+  const barH = 20;
+
+  STAT_META.forEach(meta => {
+    const val = result.stats[meta.key] != null ? result.stats[meta.key] : 50;
+
+    ctx.font = '30px "Space Grotesk", sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(meta.icon, padX, y + barH / 2);
+
+    ctx.fillStyle = INK;
+    ctx.font = '600 26px "Space Grotesk", sans-serif';
+    ctx.fillText(meta.label, padX + 46, y + barH / 2);
+
+    // piste
+    roundRectPath(ctx, barX, y, barTrackW, barH, barH / 2);
+    ctx.fillStyle = 'rgba(26,26,24,0.09)';
+    ctx.fill();
+
+    // remplissage
+    const fillW = Math.max(barH, (barTrackW * val) / 100);
+    roundRectPath(ctx, barX, y, fillW, barH, barH / 2);
+    ctx.fillStyle = meta.color;
+    ctx.fill();
+
+    ctx.textBaseline = 'alphabetic';
+    y += 62;
+  });
+
+  // Pied de page
+  ctx.fillStyle = 'rgba(26,26,24,0.45)';
+  ctx.font = '600 22px "JetBrains Mono", monospace';
+  ctx.fillText('Quel archétype de millenial es-tu ? — fais le test', padX, cardY + cardH - 44);
+
+  return canvas;
+}
+
+function buildShareResult(){
+  if(!lastResult) return null;
+  if(lastResult.key === 'double'){
+    const [w1, w2] = lastResult.winners;
+    const bullets = [
+      PROFILES[w1].bullets[0],
+      PROFILES[w2].bullets[0],
+      PROFILES[w1].bullets[2] || PROFILES[w2].bullets[2]
+    ].filter(Boolean).slice(0, 3);
+    const stats = {};
+    STAT_META.forEach(m => {
+      stats[m.key] = Math.round((PROFILES[w1].stats[m.key] + PROFILES[w2].stats[m.key]) / 2);
+    });
+    return {
+      key: 'double',
+      title: lastResult.title,
+      short: "à cheval entre deux postures, selon le sujet du jour",
+      bullets,
+      stats
+    };
+  }
+  const p = PROFILES[lastResult.key];
+  return { key: lastResult.key, title: p.title, short: p.short, bullets: p.bullets, stats: p.stats };
+}
+
+const shareBtn = document.getElementById('shareBtn');
+const shareNote = document.getElementById('shareNote');
+
+function flashNote(text){
+  shareNote.textContent = text;
+  shareNote.classList.add('visible');
+  setTimeout(()=> shareNote.classList.remove('visible'), 2500);
+}
+
+async function shareResult(){
+  const result = buildShareResult();
+  if(!result) return;
+
+  shareBtn.disabled = true;
+  try{
+    const canvas = await buildPersonaCard(result);
+    canvas.toBlob(async (blob)=>{
+      shareBtn.disabled = false;
+      if(!blob) { flashNote("Erreur de génération, réessaie."); return; }
+
+      const url = URL.createObjectURL(blob);
+      personaPreview.src = url;
+      personaPreview.style.display = 'block';
+
+      const file = new File([blob], 'mon-profil-millenial.png', { type: 'image/png' });
+      const caption = `Mon résultat au quiz "Quel archétype de millenial es-tu ?" : ${result.title}`;
+
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        try{
+          await navigator.share({ files: [file], title: 'Quel archétype de millenial es-tu ?', text: caption });
+          flashNote('Partagé !');
+          return;
+        }catch(e){ /* annulé -> on laisse l'aperçu + téléchargement ci-dessous */ }
+      }
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mon-profil-millenial.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      flashNote('Image téléchargée !');
+    }, 'image/png');
+  }catch(e){
+    shareBtn.disabled = false;
+    flashNote("Erreur de génération, réessaie.");
+  }
+}
+
+shareBtn.addEventListener('click', shareResult);
+
+/* Parallaxe légère du fond mosaïque (souris desktop uniquement) */
+const bgLayer1 = document.getElementById('bgLayer1');
+const bgLayer2 = document.getElementById('bgLayer2');
+if(window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+  window.addEventListener('mousemove', (e)=>{
+    const px = (e.clientX / window.innerWidth) - 0.5;
+    const py = (e.clientY / window.innerHeight) - 0.5;
+    bgLayer1.style.transform = `translate(${px * -14}px, ${py * -14}px) rotate(-1deg)`;
+    bgLayer2.style.transform = `translate(${px * 22}px, ${py * 22}px) rotate(1deg)`;
+  });
+}
 
 renderQuestion();
 </script>
